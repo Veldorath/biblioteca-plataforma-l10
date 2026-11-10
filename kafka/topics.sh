@@ -18,7 +18,8 @@ UN_DIA=86400000
 
 crear() {
   topic=$1
-  retencion=$2
+  politica=$2
+  retencion=${3:-}
   docker compose exec -T "$SERVICIO" /opt/kafka/bin/kafka-topics.sh \
     --bootstrap-server "$BOOTSTRAP" \
     --create --if-not-exists \
@@ -26,14 +27,15 @@ crear() {
     --partitions 3 \
     --replication-factor 3 \
     --config min.insync.replicas=2 \
-    --config cleanup.policy=delete \
-    --config retention.ms="$retencion"
+    --config cleanup.policy="$politica" \
+    ${retencion:+--config retention.ms="$retencion"}
 }
 
-crear biblioteca.prestamos "$SIETE_DIAS"
-crear biblioteca.lecturas "$UN_DIA"
-crear biblioteca.prestamos.dlt "$SIETE_DIAS"
-crear biblioteca.lecturas.dlt "$SIETE_DIAS"
+crear biblioteca.prestamos delete "$SIETE_DIAS"
+crear biblioteca.lecturas delete "$UN_DIA"
+crear biblioteca.prestamos.dlt delete "$SIETE_DIAS"
+crear biblioteca.lecturas.dlt delete "$SIETE_DIAS"
+crear biblioteca.catalogo compact
 
 docker compose exec -T "$SERVICIO" /opt/kafka/bin/kafka-topics.sh \
   --bootstrap-server "$BOOTSTRAP" --describe --topics-with-overrides --exclude-internal
