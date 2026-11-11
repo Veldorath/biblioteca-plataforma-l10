@@ -1,13 +1,13 @@
 # Biblioteca L10 en Azure
 
-El grupo de recursos es `biblioteca-l10`. La región candidata es
-`mexicocentral` (Mexico Central). En la consulta anterior ambas VM figuraban
-en las zonas 2 y 3 y había cuota para 6 vCPU regionales. Confirma la
-disponibilidad y la cuota actuales antes de crear las dos VM de 2 vCPU.
+El grupo de recursos es `biblioteca-l10`. Los recursos del lab se crean en
+`northcentralus` (North Central US). La consulta de la suscripción mostró los
+dos tamaños sin restricciones y sin zonas de disponibilidad, con 6 vCPU
+regionales libres. Las dos VM requieren 4 vCPU en total.
 
 | Recurso | Configuración |
 | --- | --- |
-| VNet `vnet-biblioteca` | `10.1.0.0/16` |
+| VNet `vnet-biblioteca-ncus` | `10.1.0.0/16` |
 | Subred `publica` | `10.1.1.0/24`, NSG `nsg-gw-azure` |
 | Subred `privada` | `10.1.2.0/24`, sin salida predeterminada, NSG `nsg-bff` y tabla `rt-privada` |
 | Ruta `salida` | `0.0.0.0/0`, dispositivo virtual en `10.1.1.4` |
@@ -27,6 +27,6 @@ de las dos VM después de detenerlas desde el portal. Ambas deben aparecer como
 `Stopped (deallocated)` o `Detenido (desasignado)`.
 
 Los scripts de esta carpeta son la implementación por CLI del lab.
-`L`, `ZONA` y `ETIQUETA` permiten cambiar la región, la zona y el DNS sin
+`L` y `ETIQUETA` permiten cambiar la región y el DNS sin
 editar los archivos. Si configuras en el portal, usa estos scripts como
 referencia para nombres y valores. La llave privada se guarda en tu perfil.

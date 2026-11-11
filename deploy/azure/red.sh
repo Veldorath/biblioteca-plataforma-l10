@@ -59,6 +59,6 @@ az network vnet subnet update -g $G --vnet-name $VNET -n privada --nsg nsg-bff \
   --route-table rt-privada --default-outbound false -o none
 
 # 5. IP publica estatica de gw-azure, con etiqueta DNS
-az network public-ip create -g "$G" -l "$L" -n pip-gw-azure --sku Standard --allocation-method Static --zone "$ZONA" \
+az network public-ip create -g "$G" -l "$L" -n pip-gw-azure --sku Standard --allocation-method Static \
   --dns-name "$ETIQUETA" -o none
 az network public-ip show -g $G -n pip-gw-azure --query "{ip:ipAddress, fqdn:dnsSettings.fqdn}" -o table

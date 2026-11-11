@@ -1,10 +1,9 @@
 # Variables comunes de los scripts de Azure de la biblioteca. Se cargan con 'source comun.sh'.
 G=${G:-biblioteca-l10}                       # grupo de recursos: todo queda dentro de el
-L=${L:-mexicocentral}                       # region que acepta la politica "Ubicaciones permitidas"
+L=${L:-northcentralus}                     # region habilitada para el laboratorio
 ETIQUETA=${ETIQUETA:-biblioteca-l10-veldorath}          # etiqueta DNS de gw-azure: <etiqueta>.<region>.cloudapp.azure.com
 CLAVE=${CLAVE:-$HOME/.ssh/biblioteca-azure}  # llave SSH de quien aloja Azure (se genera si no existe)
-VNET=vnet-biblioteca
-ZONA=${ZONA:-2}                             # zona habilitada para ambos tamanos en Mexico Central
+VNET=vnet-biblioteca-ncus
 # IP extra que pueden entrar por SSH a gw-azure, separadas por espacio (la de quien corre red.sh entra siempre):
 #   SSH_EXTRA="190.20.30.40 181.50.60.70" bash deploy/azure/red.sh
 SSH_EXTRA=${SSH_EXTRA:-}
