@@ -1,9 +1,9 @@
 # Biblioteca L10 en Azure
 
 El grupo de recursos es `biblioteca-l10`. Los recursos del lab se crean en
-`northcentralus` (North Central US). La consulta de la suscripción mostró los
-dos tamaños sin restricciones y sin zonas de disponibilidad, con 6 vCPU
-regionales libres. Las dos VM requieren 4 vCPU en total.
+`brazilsouth` (Brazil South). Se usó `Standard_D2as_v4` en las dos VM porque
+los tamaños B del laboratorio estaban restringidos para la suscripción en esa
+región. Las dos VM ocupan los 4 vCPU disponibles de la familia DASv4.
 
 | Recurso | Configuración |
 | --- | --- |
@@ -12,8 +12,8 @@ regionales libres. Las dos VM requieren 4 vCPU en total.
 | Subred `privada` | `10.1.2.0/24`, sin salida predeterminada, NSG `nsg-bff` y tabla `rt-privada` |
 | Ruta `salida` | `0.0.0.0/0`, dispositivo virtual en `10.1.1.4` |
 | IP pública `pip-gw-azure` | IPv4 Standard estática, etiqueta DNS disponible |
-| `gw-azure` | Ubuntu 24.04, `Standard_B2ats_v2`, IP privada fija `10.1.1.4`, IP pública y reenvío IP en la NIC |
-| `bff` | Ubuntu 24.04, `Standard_B2als_v2`, IP privada fija `10.1.2.4`, sin IP pública |
+| `gw-azure` | Ubuntu 24.04, `Standard_D2as_v4`, IP privada fija `10.1.1.4`, IP pública y reenvío IP en la NIC |
+| `bff` | Ubuntu 24.04, `Standard_D2as_v4`, IP privada fija `10.1.2.4`, sin IP pública |
 
 Configura los NSG como en `red.sh`. El SSH de `gw-azure` usa tu IPv4 pública
 con máscara `/32`. Para las VM, usa autenticación con clave SSH, usuario
@@ -30,3 +30,5 @@ Los scripts de esta carpeta son la implementación por CLI del lab.
 `L` y `ETIQUETA` permiten cambiar la región y el DNS sin
 editar los archivos. Si configuras en el portal, usa estos scripts como
 referencia para nombres y valores. La llave privada se guarda en tu perfil.
+Si la clave tiene frase de contraseña, cárgala con `ssh-add` en un agente SSH
+antes de ejecutar `maquinas.sh`, que comprueba la conexión en modo no interactivo.

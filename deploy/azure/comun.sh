@@ -1,6 +1,6 @@
 # Variables comunes de los scripts de Azure de la biblioteca. Se cargan con 'source comun.sh'.
 G=${G:-biblioteca-l10}                       # grupo de recursos: todo queda dentro de el
-L=${L:-northcentralus}                     # region habilitada para el laboratorio
+L=${L:-brazilsouth}                        # region del despliegue verificado
 ETIQUETA=${ETIQUETA:-biblioteca-l10-veldorath}          # etiqueta DNS de gw-azure: <etiqueta>.<region>.cloudapp.azure.com
 CLAVE=${CLAVE:-$HOME/.ssh/biblioteca-azure}  # llave SSH de quien aloja Azure (se genera si no existe)
 VNET=vnet-biblioteca-ncus

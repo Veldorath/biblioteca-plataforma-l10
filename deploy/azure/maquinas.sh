@@ -15,7 +15,7 @@ existe() { az vm show -g $G -n "$1" --query id -o tsv >/dev/null 2>&1; }
 if ! existe gw-azure; then
   az network nic create -g "$G" -l "$L" -n nic-gw-azure --vnet-name $VNET --subnet publica \
     --private-ip-address 10.1.1.4 --public-ip-address pip-gw-azure --ip-forwarding true -o none
-  az vm create -g "$G" -l "$L" -n gw-azure --image Ubuntu2404 --size Standard_B2ats_v2 --nics nic-gw-azure \
+  az vm create -g "$G" -l "$L" -n gw-azure --image Ubuntu2404 --size Standard_D2as_v4 --nics nic-gw-azure \
     --admin-username azureuser --ssh-key-values "$PUB" --custom-data cloud-init-gw-azure.yaml \
     --os-disk-size-gb 30 --storage-sku StandardSSD_LRS -o none
 fi
@@ -38,7 +38,7 @@ ssh "${SSHO[@]}" "azureuser@$IP" "timeout 600 cloud-init status --wait"
 if ! existe bff; then
   az network nic create -g "$G" -l "$L" -n nic-bff --vnet-name $VNET --subnet privada \
     --private-ip-address 10.1.2.4 -o none
-  az vm create -g "$G" -l "$L" -n bff --image Ubuntu2404 --size Standard_B2als_v2 --nics nic-bff \
+  az vm create -g "$G" -l "$L" -n bff --image Ubuntu2404 --size Standard_D2as_v4 --nics nic-bff \
     --admin-username azureuser --ssh-key-values "$PUB" --custom-data cloud-init-bff.yaml \
     --os-disk-size-gb 30 --storage-sku StandardSSD_LRS -o none
 fi
