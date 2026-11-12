@@ -36,6 +36,21 @@ IPv4 de salida: 20.226.129.185
 
 La IPv4 de salida coincide con la IP pública de `gw-azure`.
 
+## Azure · Ruta de la subred privada
+
+```bash
+az network route-table route list \
+  -g biblioteca-l10 --route-table-name rt-privada -o table
+```
+
+```text
+AddressPrefix    HasBgpOverride    Name    NextHopIpAddress    NextHopType       ProvisioningState    ResourceGroup
+---------------  ----------------  ------  ------------------  ----------------  -------------------  ---------------
+0.0.0.0/0        False             salida  10.1.1.4            VirtualAppliance  Succeeded            biblioteca-l10
+```
+
+La ruta predeterminada apunta a la IP privada de `gw-azure`.
+
 ## Azure · Estado final de las VM
 
 ```bash
@@ -50,3 +65,19 @@ VM        Estado
 bff       VM deallocated
 gw-azure  VM deallocated
 ```
+
+## Azure · Reglas de entrada de nsg-gw-azure
+
+```bash
+az network nsg rule list \
+  -g biblioteca-l10 --nsg-name nsg-gw-azure -o table
+```
+
+La tabla resume la salida. La IPv4 pública del cliente SSH se omite en
+esta copia y se conserva la máscara `/32`.
+
+| Regla | Prioridad | Origen | Protocolo | Puertos de destino | Acción |
+| --- | --- | --- | --- | --- | --- |
+| `web` | 100 | `Internet` | TCP | 80, 443 | Allow |
+| `ssh-integrante` | 110 | `[IPv4 del cliente]/32` | TCP | 22 | Allow |
+| `desde-privada` | 120 | `10.1.2.0/24` | `*` | `*` | Allow |
