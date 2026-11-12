@@ -26,10 +26,10 @@ log "AMI Amazon Linux 2023: $AMI"
 
 lanzar() { # máquina tipo subred grupo user-data disco ip-pública(si|no)
   local id pub
-  id=$(id_inst "$1")
+  id=$(id_inst "$1") || return 1
   if [ "$id" != None ]; then
     if [ "$(aws_ ec2 describe-instances --instance-ids "$id" --query 'Reservations[0].Instances[0].State.Name' --output text)" = stopped ]; then
-      aws ec2 start-instances --instance-ids "$id" > /dev/null
+      aws ec2 start-instances --instance-ids "$id" > /dev/null || return 1
       log "$1 estaba detenida: se enciende ($id)"
     else
       log "$1 ya existe: $id"
@@ -44,7 +44,7 @@ lanzar() { # máquina tipo subred grupo user-data disco ip-pública(si|no)
     --block-device-mappings "DeviceName=/dev/xvda,Ebs={VolumeSize=$6,VolumeType=gp3}" \
     --metadata-options HttpTokens=required \
     --tag-specifications "$(etiquetas instance "$1")" "$(etiquetas volume "$1")" \
-    --query 'Instances[0].InstanceId' --output text)
+    --query 'Instances[0].InstanceId' --output text) || return 1
   log "$1 creada: $id ($2, $3, $(ip_de "$1"))"
   echo "$id"
 }
