@@ -117,8 +117,9 @@ services:
       POSTGRES_HOST: postgres
       POSTGRES_PORT: "5432"
       KAFKA_BROKERS: broker-1:19092,broker-2:19092,broker-3:19092
+    # Para probar varias instancias, compose run --no-deps usa la red interna sin publicar puertos.
     ports:
-      - "3010:3010"
+      - "127.0.0.1:3010:3010"
     depends_on:
       postgres:
         condition: service_healthy
@@ -140,8 +141,14 @@ services:
   libros:
     build: ../biblioteca-libros
     init: true
+    environment:
+      KAFKA_BROKERS: broker-1:19092,broker-2:19092,broker-3:19092
     ports:
       - "3001:3001"
+    depends_on:
+      broker-1: { condition: service_healthy }
+      broker-2: { condition: service_healthy }
+      broker-3: { condition: service_healthy }
     healthcheck:
       test: ["CMD", "node", "-e", "fetch('http://localhost:3001/libros').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
       interval: 10s
@@ -207,6 +214,7 @@ services:
     environment:
       LIBROS_URL: http://libros:3001
       PRESTAMOS_URL: http://prestamos:3002
+      EVENTOS_URL: http://eventos:3010
     ports:
       - "3000:3000"
 

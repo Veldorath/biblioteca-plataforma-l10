@@ -58,27 +58,30 @@ Hace, en este orden: crea el `.env` de cada repositorio desde su `.env.example` 
 diciendo qué valores en blanco rellenar), levanta los tres brokers de Kafka, crea los topics con
 `sh kafka/topics.sh`, construye y levanta todo lo demás con `docker compose up -d --build --wait`, y comprueba
 con `curl` que cada servicio responde. Los topics se crean **antes** que los servicios porque `biblioteca-eventos`
-lee `biblioteca.prestamos` y `biblioteca.lecturas` al arrancar y el clúster no crea topics al vuelo.
+lee `biblioteca.prestamos`, `biblioteca.lecturas` y `biblioteca.catalogo` al arrancar, y el clúster no crea topics al vuelo.
 Al final deja `docker compose ps` y dice cómo comprobar: Kafka UI en http://localhost:8085.
 Para bajarlo sin borrar los datos: `docker compose down`.
 
 Si cambias un repositorio y quieres reconstruir solo ese servicio: `docker compose up -d --build <servicio>`
 (`gateway`, `bff`, `prestamos`, ...).
 
-## Kafka (L9)
+## Kafka (L9 y L10)
 
 Tres controllers y tres brokers en modo KRaft, más Kafka UI. Los bloques `x-…` del principio del `compose.yml`
 son las anclas que usan los siete servicios. Desde el equipo se usa
 `KAFKA_BROKERS=localhost:9092,localhost:9094,localhost:9096`; desde un contenedor de la misma red,
-`KAFKA_BROKERS=broker-1:19092,broker-2:19092,broker-3:19092` (el compose se lo pone a `prestamos` y a `eventos`).
+`KAFKA_BROKERS=broker-1:19092,broker-2:19092,broker-3:19092` (Compose se lo pone a `prestamos`, `eventos` y `libros`).
 
 | Topic | Quién publica | Key | Particiones · réplicas | Retención |
 |---|---|---|---|---|
 | `biblioteca.prestamos` | `biblioteca-prestamos` (y el simulador) | `usuarioSub` | 3 · 3 | 7 días |
 | `biblioteca.lecturas` | el simulador (los lectores electrónicos) | `libroId` | 3 · 3 | 24 horas |
 | `biblioteca.prestamos.dlt` y `biblioteca.lecturas.dlt` | (se usan en la E3) | | 3 · 3 | 7 días |
+| `biblioteca.catalogo` | `biblioteca-libros` | `libroId` | 3 · 3 | Compactado por clave |
 
-Todos con `min.insync.replicas=2` y `cleanup.policy=delete`. Los crea **solo** `kafka/topics.sh`, que se puede
+Todos usan `min.insync.replicas=2`. El catálogo usa `cleanup.policy=compact` y los demás usan `delete`.
+Los detalles están en [Topics](docs/topics.md) y [Consumer groups](docs/consumer-groups.md).
+Los crea **solo** `kafka/topics.sh`, que se puede
 correr las veces que haga falta (`--if-not-exists`); los `WARNING` sobre puntos y guiones bajos son normales.
 Para ver el líder y el ISR de cada partición:
 
